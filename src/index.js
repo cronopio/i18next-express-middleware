@@ -42,8 +42,16 @@ export function handle(i18next, options = {}) {
 
     // assert for res -> template
     if (res.locals) {
-      res.locals.t = t;
-      res.locals.exists = exists;
+      res.locals.t = function() {
+        return function(text, render) {
+          return render(t(text))
+        }
+      };
+      res.locals.exists = function() {
+        return function (text, render) {
+          return render(exists(text))
+        }
+      };
       res.locals.i18n = i18n;
       res.locals.language = lng;
       res.locals.languageDir = i18next.dir(lng);
